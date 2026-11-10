@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>СРС 3. Интеллектуальное управление приготовлением ЛКМ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css"></head><body>
+<header><h1>СРС 3. Моделирование приготовления ЛКМ с интеллектуальным управлением</h1></header>
+<nav id="nav"></nav>
+<main>
+<section id="home"><div class="card"><h2>Титульный лист</h2>
+<p>Самостоятельная работа студента (СРС 3) по дисциплинам «Технология программирования» и «FullStack разработка».</p>
+<p><b>Тема:</b> моделирование, прогнозирование и оценка технологического процесса приготовления лакокрасочных материалов на основе методов интеллектуального управления.</p>
+<p>Студент: ____________________  Группа: ________  Преподаватель: ____________________</p></div>
+<div class="card"><h2>Цель и задачи</h2>
+<p><b>Цель:</b> изучить принципы моделирования процесса приготовления ЛКМ, разработать модель, исследовать прогнозирование параметров и предложить систему интеллектуального управления для повышения качества продукции.</p>
+<ol><li>Построить структурную схему процесса.</li><li>Разработать математическую модель (тепловой баланс, вязкость).</li><li>Обучить модель прогнозирования вязкости (линейная регрессия, случайный лес).</li><li>Разработать алгоритм интеллектуального управления.</li><li>Сравнить традиционное и интеллектуальное управление.</li></ol></div>
+<div class="card"><h2>Описание процесса</h2>
+<p>Приготовление ЛКМ — многоэтапный процесс: дозирование компонентов, смешивание, диспергирование пигментов, регулирование вязкости, контроль температуры и проверка качества. Отклонения температуры, скорости перемешивания, времени и соотношения компонентов меняют вязкость, вызывают неоднородность и ухудшают свойства покрытия.</p>
+<div class="tw"><table><tr><th>Обозн.</th><th>Параметр</th><th>Единица</th></tr><tr><td>T</td><td>Температура смеси</td><td>°C</td></tr><tr><td>n</td><td>Частота вращения мешалки</td><td>об/мин</td></tr><tr><td>t</td><td>Продолжительность смешивания</td><td>мин</td></tr><tr><td>μ</td><td>Вязкость</td><td>мПа·с</td></tr><tr><td>C</td><td>Концентрация компонентов</td><td>%</td></tr><tr><td>P</td><td>Мощность перемешивания</td><td>кВт</td></tr><tr><td>Q</td><td>Производительность</td><td>кг/ч</td></tr></table></div>
+<div class="note">Все данные в работе — <b>модельные (синтетические)</b>. Они не подтверждают эффективность системы в реальном производстве.</div></div></section>
+
+<section id="proc"><div class="card"><h2>Структурная схема процесса</h2>
+<div class="sch"><svg viewBox="0 0 900 340" role="img" aria-label="Структурная схема">
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#888"/></marker></defs>
+<g stroke="#888" stroke-width="2" fill="none" marker-end="url(#ar)"><path d="M118 150H142"/><path d="M262 150H286"/><path d="M406 150H430"/><path d="M550 150H574"/><path d="M694 150H718"/><path d="M778 190V230"/><path d="M780 280H840" /><path d="M490 110V80H490"/></g>
+<g fill="#ffe9d6" stroke="#d1495b" stroke-width="2"><rect x="0" y="120" width="116" height="60" rx="8"/><rect x="144" y="120" width="116" height="60" rx="8"/><rect x="288" y="120" width="116" height="60" rx="8"/><rect x="432" y="120" width="116" height="60" rx="8" fill="#d6f0f2" stroke="#00798c"/><rect x="576" y="120" width="116" height="60" rx="8"/><rect x="720" y="120" width="116" height="60" rx="8"/><rect x="720" y="232" width="150" height="60" rx="8" fill="#e5f4d9" stroke="#6a994e"/></g>
+<g text-anchor="middle" style="fill:#2b2622"><text x="58" y="145">1. Подача</text><text x="58" y="162">компонентов</text><text x="202" y="145">2. Дозирование</text><text x="202" y="162">сырья</text><text x="346" y="145">3. Загрузка в</text><text x="346" y="162">смеситель</text><text x="490" y="145">4. Перемешивание</text><text x="490" y="162">и диспергирование</text><text x="634" y="145">5. Контроль</text><text x="634" y="162">T и μ</text><text x="778" y="145">6. Оценка</text><text x="778" y="162">качества</text><text x="795" y="258">7. Готовый ЛКМ</text><text x="795" y="276">(μ, T, C в допуске)</text></g>
+<rect x="300" y="10" width="380" height="50" rx="8" fill="#ede2f7" stroke="#7b4ea3" stroke-width="2"/><text x="490" y="30" text-anchor="middle" style="fill:#2b2622">Интеллектуальный контроллер</text><text x="490" y="48" text-anchor="middle" style="fill:#2b2622">прогноз μ → управляющие воздействия</text>
+<g stroke="#7b4ea3" stroke-width="2" fill="none" marker-end="url(#ar)"><path d="M490 60V118"/><path d="M634 118V90H680V60" stroke-dasharray="5 4"/></g>
+<text x="500" y="92" style="fill:#7b4ea3">T_уст, n, t</text><text x="640" y="88" style="fill:#7b4ea3">датчики →</text>
+<g text-anchor="middle" style="fill:#2b2622"><text x="145" y="215">ВХОДЫ: масса/доли компонентов, C, температура сырья</text><text x="560" y="215">ДАТЧИКИ: T, μ (вискозиметр), n, мощность P</text><text x="560" y="250">УПРАВЛЕНИЕ: T_уст (нагрев), n, t</text><text x="400" y="320">ВЫХОДЫ: вязкость μ, однородность, соответствие рецептуре, энергозатраты</text></g></svg></div></div></section>
+
+<section id="model"><div class="card"><h2>Математическая модель</h2>
+<h3>Тепловой баланс</h3><div class="f">Cₚ·m·dT/dt = Pₕ − Qₗ</div>
+<p>Cₚ = 1800 Дж/(кг·°C) — теплоёмкость; m = 100 кг — масса; Pₕ = P_нагр + 0,5·P_меш — тепловая мощность (нагреватель плюс доля мощности мешалки, P_меш = 0,03·n² Вт); Qₗ = k·(T − T_ср) — теплоотвод, k = 150 Вт/°C, T_ср ≈ 20 °C. Нагреватель: P_нагр = clip(2000·(T_уст − T), 0, 10000) Вт.</p>
+<h3>Вязкость μ = f(T, n, t, C)</h3>
+<div class="f">μ = 900·e<sup>−0,035(T−25)</sup>·(C/50)²·(300/n)<sup>0,25</sup>·(1 + 0,5·e<sup>−t/8</sup>)</div>
+<p>Физический смысл: вязкость падает с ростом T (экспоненциально), растёт с концентрацией твёрдой фазы C, снижается с ростом скорости сдвига (псевдопластичность, n^−0,25) и уменьшается по мере диспергирования (e^−t/8). Для определения коэффициентов нужны данные: вискозиметрия при разных T и C, замеры μ(t) при разных n, термограмма нагрева/остывания для оценки k и Cₚ·m.</p>
+<div class="note">Целевая вязкость: 700 мПа·с, допуск ±5 % (665–735 мПа·с).</div></div>
+<div class="card"><h3>Симуляция одной партии</h3>
+<div class="g"><div><label>Уставка T, °C: <b id="mTv"></b></label><input type="range" id="mT" min="20" max="50" value="35"></div><div><label>Скорость n, об/мин: <b id="mnv"></b></label><input type="range" id="mn" min="100" max="500" step="10" value="300"></div><div><label>Концентрация C, %: <b id="mCv"></b></label><input type="range" id="mC" min="40" max="60" step="0.5" value="50"></div></div>
+<div class="res" id="mres"></div></div>
+<div class="card"><div class="g" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))"><div class="ch"><canvas id="c1"></canvas></div><div class="ch"><canvas id="c2"></canvas></div></div></div></section>
+
+<section id="pred"><div class="card"><h2>Прогнозирование вязкости</h2>
+<p><b>Данные:</b> 300 синтетических записей (T 20–50 °C, n 100–500 об/мин, t 2–20 мин, C 40–60 %) с мультипликативным шумом 4 %; выборка делится на обучающую (240) и тестовую (60).</p>
+<p><b>Методы:</b> (1) линейная регрессия по ln μ с признаками T, ln n, t, ln C (простая, интерпретируемая); (2) случайный лес — 40 деревьев глубиной 6, бутстрэп (улавливает нелинейность e^−t/8). Оба метода реализованы на JavaScript без библиотек; аналог на Python — файл <code>viscosity_model.py</code>. Точность оценивается на тесте: MAE, RMSE, R², MAPE.</p>
+<button class="btn" id="bre">Переобучить (другое зерно)</button>
+<h3>Анализ данных</h3><div class="tw"><table id="tst"></table></div>
+<h3>Качество прогноза</h3><div class="tw"><table id="tm"></table></div><p id="tbest"></p></div>
+<div class="card"><div class="ch" style="height:340px"><canvas id="c3"></canvas></div></div>
+<div class="card"><h3>Факт и прогноз (первые 8 тестовых образцов)</h3><div class="tw"><table id="ts"></table></div></div></section>
+
+<section id="ctrl"><div class="card"><h2>Интеллектуальное управление</h2>
+<ol><li>Получение данных датчиков (T, n, C, мощность).</li><li>Проверка корректности (диапазоны, скачки).</li><li>Определение состояния процесса.</li><li>Прогноз вязкости обученной моделью.</li><li>Сравнение с целью 700 мПа·с ±5 %.</li><li>Коррекция: T_уст += 25·e, n += 200·e (e — относительная ошибка μ̂), в пределах T 25–50 °C, n 100–500; мощность нагрева ≤ 10 кВт.</li><li>Повторное измерение; завершение, когда прогноз в допуске две минуты подряд.</li></ol>
+<p><b>Традиционное:</b> фиксированный режим T_уст = 35 °C, n = 300 об/мин, 30 мин. <b>Интеллектуальное:</b> режим корректируется по прогнозу. Возмущения: концентрация C ~ N(50; 2,5²) и температура среды (случайные для каждой партии).</p>
+<button class="btn" id="bb">Новая партия</button><div class="res" id="cres"></div></div>
+<div class="card"><div class="ch" style="height:340px"><canvas id="c4"></canvas></div></div>
+<div class="card"><h3>Сравнение подходов (200 партий)</h3><div class="tw"><table id="cmp"></table></div><p id="cmpt"></p></div></section>
+
+<section id="qa"><div class="card"><h2>Контрольные вопросы</h2><div id="qlist"></div></div></section>
+
+<section id="concl"><div class="card"><h2>Выводы</h2><div id="cc"></div>
+<div class="note">Результаты получены на модельных данных; для реального производства нужны промышленные данные, валидация и пробная эксплуатация.</div></div>
+<div class="card"><h2>Список литературы</h2><ol><li>Методические указания к лабораторной работе № 2 «Моделирование процесса приготовления лакокрасочных материалов».</li><li>Breiman L. Random Forests // Machine Learning. 2001. Vol. 45. P. 5–32.</li><li>Hastie T., Tibshirani R., Friedman J. The Elements of Statistical Learning. Springer, 2009.</li><li>Ogata K. Modern Control Engineering. Pearson.</li><li>Документация Chart.js: chartjs.org.</li></ol></div></section>
+</main>
+<script src="script.js"></script></body></html>
